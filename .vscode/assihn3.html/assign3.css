@@ -1,0 +1,80 @@
+
+body {
+  margin: 0;
+  display: grid;
+  height: 100vh;
+  background: #311B92;
+  place-items: center;
+}
+
+main {
+  display: grid;
+  padding: 0 1.2rem;
+  gap: 0.8rem;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  font-family: Inconsolata;
+}
+
+.card {
+  --bg-color: attr(bg-color type(<color>), red);
+  background: var(--bg-color);
+  border-radius: 0.4rem;
+  box-shadow: 0 5px 10px -7px;
+  padding: 0.8rem;
+  
+  & .card__image {
+    display: block;
+    width: 100%;
+    aspect-ratio: 2 / 1;
+    border-radius: 0.4rem;
+  }
+  .button{
+    padding: 20px;
+    width: 50px;
+  }
+  
+  & .card__text {
+    margin-bottom: 0;
+  }
+}
+
+/* The magic on the color */
+.card__text {
+  --threshold: 153;
+  
+  --r-check-value: min(max(calc((r / 255) - 0.4045),0),1);
+  --r-small-calc: calc(r / 12.92);
+  --r-big-calc:   pow(calc((r + 0.055) / 1.055), 2.4);
+  --r-calc: calc(
+      var(--r-small-calc) * calc(var(--r-check-value) + 1) + 
+      var(--r-big-calc) * var(--r-check-value)
+  );
+
+  --g-check-value: min(max(calc((g / 255) - 0.4045),0),1);
+  --g-small-calc: calc(g / 12.92);
+  --g-big-calc:   pow(calc((g + 0.055) / 1.055), 2.4);
+  --g-calc: calc(
+      var(--g-small-calc) * calc(var(--g-check-value) + 1) + 
+      var(--g-big-calc) * var(--g-check-value)
+  );
+  
+  --b-check-value: min(max(calc((b / 255) - 0.4045),0),1);
+  --b-small-calc: calc(b / 12.92);
+  --b-big-calc:   pow(calc((b + 0.055) / 1.055), 2.4);
+  --b-calc: calc(
+      var(--b-small-calc) * calc(var(--b-check-value) + 1) + 
+      var(--b-big-calc) * var(--b-check-value)
+  );
+  
+  --lum-calc: calc((var(--r-calc) * 0.2126 + var(--g-calc) * 0.7152 + var(--b-calc) * 0.0722));
+  --lum-threshold: min(max(calc(var(--lum-calc) - (sqrt(1.05 * 0.05) - 0.05)),0),1); 
+  --reverse-color: calc(255 - var(--lum-calc) + 1);
+  --color: calc(255 * var(--reverse-color));
+  --ci: var(--color) var(--color) var(--color);
+
+  padding: 0.4rem;
+  color: rgb(
+    from var(--bg-color)
+    var(--ci)
+  )
+}
